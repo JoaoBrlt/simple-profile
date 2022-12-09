@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "simple-profile"
+version = "1.0.0"
+description = "Simple profile decorator to monitor execution time and memory usage."
+authors = ["João Brilhante"]
+license = "GPL-3.0-only"
+readme = "README.md"
+homepage="https://github.com/JoaoBrlt/simple-profile"
+repository="https://github.com/JoaoBrlt/simple-profile"
+packages = [{include = "simple_profile"}]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3"
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
