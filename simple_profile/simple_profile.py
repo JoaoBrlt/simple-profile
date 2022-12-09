@@ -99,7 +99,7 @@ def time_profile(
     return decorator
 
 
-def simple_profile(
+def profile(
     name=None,
     iterations=10000,
     time_unit: TimeUnit = TimeUnit.MICROSECONDS,
