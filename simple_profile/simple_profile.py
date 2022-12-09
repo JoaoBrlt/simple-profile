@@ -68,7 +68,7 @@ def format_time(value: float, unit: TimeUnit) -> str:
 
 def memory_profile(
     name=None,
-    memory_unit: MemoryUnit = MemoryUnit.KILOBYTES
+    memory_unit: MemoryUnit = MemoryUnit.MEGABYTES
 ):
     def decorator(function):
         def wrapper(*args, **kwargs):
@@ -85,7 +85,7 @@ def memory_profile(
 def time_profile(
     name: str = None,
     iterations=10000,
-    time_unit: TimeUnit = TimeUnit.MICROSECONDS,
+    time_unit: TimeUnit = TimeUnit.MILLISECONDS,
 ):
     def decorator(function):
         def wrapper(*args, **kwargs):
@@ -102,8 +102,8 @@ def time_profile(
 def profile(
     name=None,
     iterations=10000,
-    time_unit: TimeUnit = TimeUnit.MICROSECONDS,
-    memory_unit: MemoryUnit = MemoryUnit.KILOBYTES
+    time_unit: TimeUnit = TimeUnit.MILLISECONDS,
+    memory_unit: MemoryUnit = MemoryUnit.MEGABYTES
 ):
     def decorator(function):
         def wrapper(*args, **kwargs):
