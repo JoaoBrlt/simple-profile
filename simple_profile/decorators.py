@@ -1,8 +1,7 @@
 from typing import Optional, Any, Callable
 
 from simple_profile.types import MemoryUnit, TimeUnit
-from simple_profile.utils import measure_peak_memory_usage, measure_average_execution_time, get_function_call_log, \
-    format_memory_value, format_time_value
+from simple_profile.utils import measure_peak_memory_usage, measure_average_execution_time, get_function_call_log
 
 
 def memory_profile(
@@ -10,7 +9,7 @@ def memory_profile(
     print_args=False,
     print_result=False,
     separator=" | ",
-    unit=MemoryUnit.BYTES,
+    unit: Optional[MemoryUnit] = None,
     precision=4
 ):
     """
@@ -28,7 +27,7 @@ def memory_profile(
             peak_memory_usage, result = measure_peak_memory_usage(function, args, kwargs)
 
             message = get_function_call_log(name, function, args, kwargs, result, print_args, print_result, separator)
-            message += separator + format_memory_value(peak_memory_usage, unit, precision)
+            message += separator + MemoryUnit.format_value(peak_memory_usage, unit, precision)
             print(message)
 
             return result
@@ -42,8 +41,9 @@ def time_profile(
     print_args=False,
     print_result=False,
     separator=" | ",
-    unit=TimeUnit.NANOSECONDS,
-    precision=4
+    unit: Optional[TimeUnit] = None,
+    precision=4,
+    enable_gc=False
 ):
     """
     Logs the average execution time of each function call.
@@ -54,15 +54,16 @@ def time_profile(
     :param separator: the separator to use between log values
     :param unit: the time unit to use
     :param precision: the time precision to use (in number of significant digits)
+    :param enable_gc: whether to enable garbage collection during the measurement
     :return: the decorated function
     """
     def decorator(function: Callable):
         def wrapper(*args: Any, **kwargs: Any):
-            average_execution_time = measure_average_execution_time(function, args, kwargs, iterations)
+            average_execution_time = measure_average_execution_time(function, args, kwargs, iterations, enable_gc)
             result = function(*args, **kwargs)
 
             message = get_function_call_log(name, function, args, kwargs, result, print_args, print_result, separator)
-            message += separator + format_time_value(average_execution_time, unit, precision)
+            message += separator + TimeUnit.format_value(average_execution_time, unit, precision)
             print(message)
 
             return result
@@ -76,11 +77,12 @@ def simple_profile(
     print_args=False,
     print_result=False,
     separator=" | ",
-    memory_unit=MemoryUnit.BYTES,
+    memory_unit: Optional[MemoryUnit] = None,
     memory_precision=4,
-    time_unit=TimeUnit.NANOSECONDS,
+    time_unit: Optional[TimeUnit] = None,
     time_precision=4,
-    precision=None
+    precision=None,
+    enable_gc=False
 ):
     """
     Logs the peak memory usage and the average execution time of each function call.
@@ -94,22 +96,21 @@ def simple_profile(
     :param time_unit: the time unit to use
     :param time_precision: the time precision to use (in number of significant digits)
     :param precision: the precision to use for all values (in number of significant digits)
+    :param enable_gc: whether to enable garbage collection during the measurement
     :return: the decorated function
     """
+    if precision is not None:
+        memory_precision = precision
+        time_precision = precision
+
     def decorator(function: Callable):
         def wrapper(*args: Any, **kwargs: Any):
             peak_memory_usage, result = measure_peak_memory_usage(function, args, kwargs)
-            average_execution_time = measure_average_execution_time(function, args, kwargs, iterations)
-
-            actual_memory_precision = memory_precision
-            actual_time_precision = time_precision
-            if precision is not None:
-                actual_memory_precision = precision
-                actual_time_precision = precision
+            average_execution_time = measure_average_execution_time(function, args, kwargs, iterations, enable_gc)
 
             message = get_function_call_log(name, function, args, kwargs, result, print_args, print_result, separator)
-            message += separator + format_memory_value(peak_memory_usage, memory_unit, actual_memory_precision)
-            message += separator + format_time_value(average_execution_time, time_unit, actual_time_precision)
+            message += separator + MemoryUnit.format_value(peak_memory_usage, memory_unit, memory_precision)
+            message += separator + TimeUnit.format_value(average_execution_time, time_unit, time_precision)
             print(message)
 
             return result

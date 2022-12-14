@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "simple-profile"
-version = "1.1.0"
+version = "1.1.1"
 description = "Simple profile decorators to monitor execution time and memory usage."
 authors = ["João Brilhante"]
 license = "GPL-3.0-only"
@@ -8,6 +8,7 @@ readme = "README.md"
 homepage="https://github.com/JoaoBrlt/simple-profile"
 repository="https://github.com/JoaoBrlt/simple-profile"
 packages = [{include = "simple_profile"}]
+keywords = ["profiler", "profiling", "timer", "timing", "timeit", "tracemalloc", "memory", "execution", "decorator"]
 classifiers = [
     "Environment :: Console",
     "Intended Audience :: Developers",

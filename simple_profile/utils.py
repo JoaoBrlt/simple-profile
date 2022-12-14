@@ -1,8 +1,6 @@
 import timeit
 import tracemalloc
-from typing import cast, Any, Callable, Optional
-
-from simple_profile import MemoryUnit, TimeUnit
+from typing import Any, Callable, Optional
 
 
 def measure_memory_usage(
@@ -36,23 +34,34 @@ def measure_peak_memory_usage(function: Callable, args: tuple[Any, ...], kwargs:
     return memory_usage[1], result
 
 
-def measure_execution_time(function: Callable, args: tuple[Any, ...], kwargs: dict[str, Any], iterations: int) -> float:
+def measure_execution_time(
+    function: Callable,
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
+    iterations: int,
+    enable_gc: bool
+) -> float:
     """
     Measures the execution time of a function call.
     :param function: the function to analyze
-    :param iterations: the number of times to execute the function call
     :param args: the arguments to use
     :param kwargs: the keyword arguments to use
+    :param iterations: the number of times to execute the function call
+    :param enable_gc: whether to enable garbage collection during the measurement
     :return: the execution time of all the iterations of the function call (in seconds)
     """
-    return timeit.timeit(lambda: function(*args, **kwargs), number=iterations)
+    setup = "pass"
+    if enable_gc:
+        setup = "gc.enable()"
+    return timeit.timeit(stmt=lambda: function(*args, **kwargs), setup=setup, number=iterations)
 
 
 def measure_average_execution_time(
     function: Callable,
     args: tuple[Any, ...],
     kwargs: dict[str, Any],
-    iterations: int
+    iterations: int,
+    enable_gc: bool
 ) -> float:
     """
     Measures the average execution time of a function call.
@@ -60,9 +69,10 @@ def measure_average_execution_time(
     :param iterations: the number of times to execute the function call
     :param args: the arguments to use
     :param kwargs: the keyword arguments to use
+    :param enable_gc: whether to enable garbage collection during the measurement
     :return: the average execution time of the function call (in seconds)
     """
-    execution_time = measure_execution_time(function, args, kwargs, iterations)
+    execution_time = measure_execution_time(function, args, kwargs, iterations, enable_gc)
     return execution_time / iterations
 
 
@@ -104,51 +114,9 @@ def format_args(args: tuple[Any, ...], kwargs: dict[str, Any], separator=", ") -
     return "None"
 
 
-def format_value(value: float, precision: int) -> str:
-    """
-    Formats a floating-point number.
-    :param value: the value to format
-    :param precision: the precision to use (in number of significant digits)
-    :return: the formatted value
-    """
-    return "{value:.{precision}g}".format(value=value, precision=precision)
-
-
-def format_memory_value(value: int, unit: MemoryUnit, precision: int) -> str:
-    """
-    Formats a memory value.
-    :param value: the memory value to format
-    :param unit: the memory unit to use
-    :param precision: the precision to use (in number of significant digits)
-    :return: the formatted memory value
-    """
-    converted_value = value / cast(int, unit.value[0])
-    unit_symbol = cast(str, unit.value[1])
-    return "{value} {unit}".format(
-        value=format_value(converted_value, precision),
-        unit=unit_symbol
-    )
-
-
-def format_time_value(value: float, unit: TimeUnit, precision: int) -> str:
-    """
-    Formats a time value.
-    :param value: the time value to format
-    :param unit: the time unit to use
-    :param precision: the precision to use (in number of significant digits)
-    :return: the formatted time value
-    """
-    converted_value = value / cast(float, unit.value[0])
-    unit_symbol = cast(str, unit.value[1])
-    return "{value} {unit}".format(
-        value=format_value(converted_value, precision),
-        unit=unit_symbol
-    )
-
-
 def select_profile_name(name: Optional[str], function: Callable) -> str:
     """
-    Selects the appropriate profile name.
+    Selects the profile name.
     :param name: the profile name (if provided)
     :param function: the analyzed function
     :return: the profile name
