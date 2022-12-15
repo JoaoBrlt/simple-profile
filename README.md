@@ -36,7 +36,7 @@ my_function()
 Output: 
 
 ```
-my_function | 312 B | 465.9 ns
+my_function | 432 B | 445.2 ns
 ```
 
 ### 2. Profile only the memory usage of a function
@@ -57,7 +57,7 @@ my_function()
 Output: 
 
 ```
-my_function | 312 B
+my_function | 432 B
 ```
 
 ### 3. Profile only the execution time of a function
@@ -79,7 +79,7 @@ my_function()
 Output: 
 
 ```
-my_function | 432.3 ns
+my_function | 439.3 ns
 ```
 
 ### 4. Change the number of iterations
@@ -106,7 +106,7 @@ pi(100)
 Output:
 
 ```
-pi | 80 B | 6.674 µs
+pi | 168 B | 6.461 µs
 ```
 
 ### 5. Change the time and memory units
@@ -131,7 +131,7 @@ exponential(8, 100)
 Output:
 
 ```
-exponential | 0.08 kB | 0.005581 ms
+exponential | 0.168 kB | 0.005429 ms
 ```
 
 ### 6. Change the time and memory precision
@@ -153,7 +153,7 @@ average([25, 12, 18, 88, 64, 55, 22])
 Output:
 
 ```
-average | 48 B | 172.2024 ns
+average | 120 B | 176.6314 ns
 ```
 
 ### 7. Log the arguments and the result
@@ -174,7 +174,7 @@ greeting_message("John", coins=5)
 Output:
 
 ```
-greeting_message | John, coins=5 | Hello John! You have 5 coins. | 353 B | 332.6 ns
+greeting_message | John, coins=5 | Hello John! You have 5 coins. | 521 B | 350.1 ns
 ```
 
 ### 8. Set a custom name for a function
@@ -198,7 +198,7 @@ factorial(10)
 Output:
 
 ```
-Naive method | 96 B | 420.2 ns
+Naive method | 160 B | 411.3 ns
 ```
 
 ### 9. Compare multiple functions
@@ -225,11 +225,35 @@ my_function_2(10)
 Output:
 
 ```
-List comprehension | 344 B | 619.6 ns
-For loop | 192 B | 664.7 ns
+List comprehension | 464 B | 666.8 ns
+For loop | 312 B | 650.7 ns
 ```
 
-### 10. Enable garbage collection during measurements
+### 10. Profile a recursive function
+
+The decorators work seamlessly with recursive functions.\
+Only one profiling message is logged per function call even if the function is recursive.
+
+```python
+from simple_profile import simple_profile
+
+@simple_profile(print_args=True, print_result=True, iterations=100)
+def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+fibonacci(10)
+```
+
+Output:
+
+```
+fibonacci | 10 | 55 | 1.648 kB | 21.04 µs
+```
+
+### 11. Enable garbage collection during measurements
 
 By default, garbage collection is temporarily turned off to make measurements more comparable, but it is possible to enable it if you prefer.\
 To do this, you can set the `enable_gc` argument of the `simple_profile()` and `time_profile()` decorators to `True`.
@@ -252,7 +276,6 @@ my_function_2()
 Output:
 
 ```
-Without GC | 834 B | 667.3 ns
-With GC | 834 B | 674.6 ns
+Without GC | 954 B | 666.5 ns
+With GC | 954 B | 669.2 ns
 ```
-

@@ -1,3 +1,4 @@
+import gc
 import timeit
 import tracemalloc
 from typing import Any, Callable, Optional
@@ -16,6 +17,7 @@ def measure_memory_usage(
     :return: the memory usage of the function call (in bytes) and its result
     """
     tracemalloc.start()
+    gc.collect()
     result = function(*args, **kwargs)
     memory_usage = tracemalloc.get_traced_memory()
     tracemalloc.stop()
@@ -50,10 +52,11 @@ def measure_execution_time(
     :param enable_gc: whether to enable garbage collection during the measurement
     :return: the execution time of all the iterations of the function call (in seconds)
     """
-    setup = "pass"
-    if enable_gc:
-        setup = "gc.enable()"
-    return timeit.timeit(stmt=lambda: function(*args, **kwargs), setup=setup, number=iterations)
+    return timeit.timeit(
+        stmt=lambda: function(*args, **kwargs),
+        setup="gc.enable()" if enable_gc else "pass",
+        number=iterations
+    )
 
 
 def measure_average_execution_time(
@@ -121,9 +124,7 @@ def select_profile_name(name: Optional[str], function: Callable) -> str:
     :param function: the analyzed function
     :return: the profile name
     """
-    if name is not None:
-        return name
-    return function.__name__
+    return name if name is not None else function.__name__
 
 
 def get_function_call_log(
