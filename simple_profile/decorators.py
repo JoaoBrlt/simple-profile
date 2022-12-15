@@ -1,7 +1,33 @@
+from functools import wraps
 from typing import Optional, Any, Callable
 
 from simple_profile.types import MemoryUnit, TimeUnit
 from simple_profile.utils import measure_peak_memory_usage, measure_average_execution_time, get_function_call_log
+
+
+def wraps_top_level(function: Callable):
+    """
+    Runs a function wrapper only if it is a top level function call.
+    :param function: the wrapped function
+    :return: the decorated wrapper
+    """
+    def decorator(wrapped: Callable):
+        top_level = True
+
+        @wraps(wrapped)
+        def wrapper(*args: Any, **kwargs: Any):
+            nonlocal top_level
+
+            if top_level:
+                try:
+                    top_level = False
+                    return wrapped(*args, **kwargs)
+                finally:
+                    top_level = True
+            return function(*args, **kwargs)
+        return wrapper
+
+    return decorator
 
 
 def memory_profile(
@@ -22,7 +48,10 @@ def memory_profile(
     :param precision: the memory precision to use (in number of significant digits)
     :return: the decorated function
     """
+
     def decorator(function: Callable):
+        @wraps_top_level(function)
+        @wraps(function)
         def wrapper(*args: Any, **kwargs: Any):
             peak_memory_usage, result = measure_peak_memory_usage(function, args, kwargs)
 
@@ -31,7 +60,9 @@ def memory_profile(
             print(message)
 
             return result
+
         return wrapper
+
     return decorator
 
 
@@ -57,7 +88,10 @@ def time_profile(
     :param enable_gc: whether to enable garbage collection during the measurement
     :return: the decorated function
     """
+
     def decorator(function: Callable):
+        @wraps_top_level(function)
+        @wraps(function)
         def wrapper(*args: Any, **kwargs: Any):
             average_execution_time = measure_average_execution_time(function, args, kwargs, iterations, enable_gc)
             result = function(*args, **kwargs)
@@ -67,7 +101,9 @@ def time_profile(
             print(message)
 
             return result
+
         return wrapper
+
     return decorator
 
 
@@ -81,7 +117,7 @@ def simple_profile(
     memory_precision=4,
     time_unit: Optional[TimeUnit] = None,
     time_precision=4,
-    precision=None,
+    precision: Optional[int] = None,
     enable_gc=False
 ):
     """
@@ -104,6 +140,8 @@ def simple_profile(
         time_precision = precision
 
     def decorator(function: Callable):
+        @wraps_top_level(function)
+        @wraps(function)
         def wrapper(*args: Any, **kwargs: Any):
             peak_memory_usage, result = measure_peak_memory_usage(function, args, kwargs)
             average_execution_time = measure_average_execution_time(function, args, kwargs, iterations, enable_gc)
@@ -114,5 +152,7 @@ def simple_profile(
             print(message)
 
             return result
+
         return wrapper
+
     return decorator
