@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "simple-profile"
-version = "1.1.2"
+version = "2.0.0"
 description = "Simple decorators to profile the memory usage and execution time."
 authors = ["João Brilhante"]
 license = "GPL-3.0-only"
