@@ -107,7 +107,7 @@ def time_profile(
     return decorator
 
 
-def simple_profile(
+def profile(
     name: Optional[str] = None,
     iterations=1000000,
     print_args=False,

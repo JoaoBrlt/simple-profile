@@ -12,7 +12,7 @@ pip install simple-profile
 
 | Decorator           | Description                                                                  |
 |---------------------|------------------------------------------------------------------------------|
-| `@simple_profile()` | Profiles the peak memory usage and the average execution time of a function. |
+| `@profile()`        | Profiles the peak memory usage and the average execution time of a function. |
 | `@memory_profile()` | Profiles only the peak memory usage of a function.                           |
 | `@time_profile()`   | Profiles only the average execution time of a function.                      |
 
@@ -20,13 +20,13 @@ pip install simple-profile
 
 ### 1. Profile a function
 
-The `@simple_profile()` decorator allows to log the peak memory usage and the average execution time of each function call.\
+The `@profile()` decorator allows to log the peak memory usage and the average execution time of each function call.\
 By default, memory usage and execution time are logged in the most suitable units, but it is possible to change the units.
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile()
+@profile()
 def my_function():
     return [2 * i for i in range(10)]
 
@@ -85,12 +85,12 @@ my_function | 439.3 ns
 ### 4. Change the number of iterations
 
 It is possible to change the number of times a function call is repeated when profiling the execution time.\
-To do this, you can set the `iterations` argument of the `simple_profile()` and `time_profile()` decorators.
+To do this, you can set the `iterations` argument of the `profile()` and `time_profile()` decorators.
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile(iterations=100)
+@profile(iterations=100)
 def pi(n):
     result = 0
     d = 1
@@ -113,12 +113,12 @@ pi | 168 B | 6.461 µs
 
 It is also possible to change the time and memory units used in the logs.\
 To do this, you can set the `unit` argument of the `memory_profile()` and `time_profile()` decorators.\
-For the `simple_profile()` decorator, you can set the `time_unit` and `memory_unit` arguments.
+For the `profile()` decorator, you can set the `time_unit` and `memory_unit` arguments.
 
 ```python
-from simple_profile import simple_profile, MemoryUnit, TimeUnit
+from simple_profile import profile, MemoryUnit, TimeUnit
 
-@simple_profile(memory_unit=MemoryUnit.KILOBYTES, time_unit=TimeUnit.MILLISECONDS)
+@profile(memory_unit=MemoryUnit.KILOBYTES, time_unit=TimeUnit.MILLISECONDS)
 def exponential(x, n):
     result = 1.0
     for i in range(n, 0, -1):
@@ -138,12 +138,12 @@ exponential | 0.168 kB | 0.005429 ms
 
 Moreover, it is possible to change the precision of memory and time values.\
 To do this, you can define the number of significant digits you want in the `precision` argument of any decorator provided by this package.\
-For the `simple_profile()` decorator, you can set the `time_precision` and `memory_precision` arguments for more granular control.
+For the `profile()` decorator, you can set the `time_precision` and `memory_precision` arguments for more granular control.
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile(precision=10)
+@profile(precision=10)
 def average(lst):
     return sum(lst) / len(lst)
 
@@ -162,9 +162,9 @@ Furthermore, it is possible to log the arguments and the result of each function
 Indeed, this can be useful to better profile a function and analyze its behavior.
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile(print_args=True, print_result=True)
+@profile(print_args=True, print_result=True)
 def greeting_message(name, coins):
     return "Hello {}! You have {} coins.".format(name, coins)
 
@@ -183,9 +183,9 @@ Additionally, it is possible to define a custom descriptive name for each functi
 To do this, you can set the `name` argument of any decorator provided by this package.
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile(name="Naive method")
+@profile(name="Naive method")
 def factorial(n):
     result = 1
     for i in range(1, n + 1):
@@ -204,14 +204,14 @@ Naive method | 160 B | 411.3 ns
 ### 9. Compare multiple functions
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile(name="List comprehension")
+@profile(name="List comprehension")
 def my_function(n):
     return [pow(2, i) for i in range(n)]
 
 
-@simple_profile(name="For loop")
+@profile(name="For loop")
 def my_function_2(n):
     lst = []
     for i in range(n):
@@ -235,9 +235,9 @@ The decorators work seamlessly with recursive functions.\
 Only one profiling message is logged per function call even if the function is recursive.
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile(print_args=True, print_result=True, iterations=100)
+@profile(print_args=True, print_result=True, iterations=100)
 def fibonacci(n):
     if n <= 1:
         return n
@@ -256,16 +256,16 @@ fibonacci | 10 | 55 | 1.648 kB | 21.04 µs
 ### 11. Enable garbage collection during measurements
 
 By default, garbage collection is temporarily turned off to make measurements more comparable, but it is possible to enable it if you prefer.\
-To do this, you can set the `enable_gc` argument of the `simple_profile()` and `time_profile()` decorators to `True`.
+To do this, you can set the `enable_gc` argument of the `profile()` and `time_profile()` decorators to `True`.
 
 ```python
-from simple_profile import simple_profile
+from simple_profile import profile
 
-@simple_profile(name="Without GC")
+@profile(name="Without GC")
 def my_function():
     return [oct(i) for i in range(10)]
 
-@simple_profile(name="With GC", enable_gc=True)
+@profile(name="With GC", enable_gc=True)
 def my_function_2():
     return [oct(i) for i in range(10)]
 
