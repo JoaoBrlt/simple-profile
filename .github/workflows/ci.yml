@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+
+  # When a commit is pushed
+  push:
+
+permissions:
+  contents: read # To clone the repository
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install the dependencies
+        run: poetry install
+
+      - name: Build the project
+        run: poetry build

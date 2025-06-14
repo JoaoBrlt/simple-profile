@@ -1,5 +1,7 @@
 # simple-profile
 
+[![CI][ci-badge-url]][ci-workflow-url]
+
 Simple decorators to profile the memory usage and execution time.
 
 ## Installation
@@ -279,3 +281,6 @@ Output:
 Without GC | 954 B | 666.5 ns
 With GC | 954 B | 669.2 ns
 ```
+
+[ci-badge-url]: https://github.com/JoaoBrlt/simple-profile/actions/workflows/ci.yml/badge.svg
+[ci-workflow-url]: hhttps://github.com/JoaoBrlt/simple-profile/actions/workflows/ci.yml
