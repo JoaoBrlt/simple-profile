@@ -282,5 +282,9 @@ Without GC | 954 B | 666.5 ns
 With GC | 954 B | 669.2 ns
 ```
 
+## License
+
+This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details.
+
 [ci-badge-url]: https://github.com/JoaoBrlt/simple-profile/actions/workflows/ci.yml/badge.svg
 [ci-workflow-url]: hhttps://github.com/JoaoBrlt/simple-profile/actions/workflows/ci.yml
